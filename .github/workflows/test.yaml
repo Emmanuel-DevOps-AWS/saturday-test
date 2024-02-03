@@ -1,0 +1,32 @@
+name: quick test for mvn and sonarqube
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build-scan:
+        runs-on: ubuntu-latest
+        steps:
+            - name: clone repository
+              uses: actions/checkout@v3
+
+            - name: install and set up java/maven
+              uses: actions/setup-java@v3
+              with:
+                distribution: 'adopt'
+                java-version: '11'
+            
+            - name: sonar scan
+              run: |
+                mvn sonar:sonar \
+                    -Dsonar.projectKey=code_scan \
+                    -Dsonar.host.url=http://34.226.152.63:9000 \
+                    -Dsonar.login=4c090709aa8ab0a491ec0b2d978805f8e8df556f
+            
+            - name: build with maven
+              run: mvn clean package
+
+            - name: success?
+              run: echo your pipeline ran successfully in the terminal
